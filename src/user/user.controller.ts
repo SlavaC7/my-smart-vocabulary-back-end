@@ -4,60 +4,50 @@ import {
   Post,
   Body,
   Patch,
-  Param,
   Delete,
-  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Types } from 'mongoose';
-import { ParseObjectIdPipe } from '@nestjs/mongoose';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { UserGuard } from 'src/common/guards/user.guard';
+import { InjectUser } from 'src/common/decorators/user.decorator';
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  @Post('me')
+  @UseGuards(UserGuard)
+  create(
+    @InjectUser() user: DecodedIdToken,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    createUserDto.uid = user.uid;
+
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll(@Req() request: Request) {
-    console.log('Request Headers:', request.headers);
-    return this.userService.findAll();
+  @Get('me')
+  @UseGuards(UserGuard)
+  async getMe(@InjectUser() user: DecodedIdToken) {
+    return this.userService.findByFirebaseUid(user.uid);
   }
 
-  @Get(':id')
-  @ApiParam({
-    name: 'id',
-    type: String,
-  })
-  findOne(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.userService.findOne(id);
-  }
-
-  @Patch(':id')
-  @ApiParam({
-    name: 'id',
-    type: String,
-  })
+  @Patch('me')
+  @UseGuards(UserGuard)
   update(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @InjectUser() user: DecodedIdToken,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(user.uid, updateUserDto);
   }
 
-  @Delete(':id')
-  @ApiParam({
-    name: 'id',
-    type: String,
-  })
-  remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-    return this.userService.remove(id);
+  @Delete('me')
+  remove(@InjectUser() user: DecodedIdToken) {
+    return this.userService.remove(user.uid);
   }
 }

@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { FirebaseModule } from './common/firebase/firebase.module';
 
 @Module({
   imports: [
+    FirebaseModule,
     UserModule,
     ConfigModule.forRoot({
       envFilePath: '.env.dev',

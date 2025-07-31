@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User } from './entities/user.schema';
 
 @Injectable()
@@ -13,19 +13,17 @@ export class UserService {
     return this.userModel.create(createUserDto);
   }
 
-  findAll() {
-    return this.userModel.find();
+  findByFirebaseUid(uid: string) {
+    return this.userModel
+      .findOne({ uid: uid })
+      .orFail(new NotFoundException('User not found'));
   }
 
-  findOne(id: Types.ObjectId) {
-    return this.userModel.findById(id);
+  update(uid: string, updateUserDto: UpdateUserDto) {
+    return this.userModel.updateOne({ uid: uid }, updateUserDto);
   }
 
-  update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
-    return this.userModel.updateOne({ _id: id }, updateUserDto);
-  }
-
-  remove(id: Types.ObjectId) {
-    return this.userModel.deleteOne({ _id: id });
+  remove(uid: string) {
+    return this.userModel.deleteOne({ uid: uid });
   }
 }
