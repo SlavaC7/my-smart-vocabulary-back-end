@@ -7,10 +7,8 @@ export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {
   @Prop()
-  @ApiProperty({
-    type: 'string',
-  })
-  _id: ObjectId;
+  @ApiProperty()
+  _id: string;
 
   @Prop()
   @ApiProperty()
