@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { HydratedDocument, ObjectId } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -8,11 +8,11 @@ export type UserDocument = HydratedDocument<User>;
 export class User {
   @Prop()
   @ApiProperty()
-  _id: string;
+  name: string;
 
   @Prop()
   @ApiProperty()
-  name: string;
+  email: string;
 
   @Prop()
   @ApiProperty()

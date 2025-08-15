@@ -23,10 +23,5 @@ async function bootstrap() {
   const configServise = app.get(ConfigService);
 
   await app.listen(3000, '0.0.0.0');
-
-  const address = app.getHttpServer().address();
-  const ip = address.address;
-  const port = address.port;
-  console.log(`Сервер запущен по адресу: http://${ip}:${port}`);
 }
 bootstrap();

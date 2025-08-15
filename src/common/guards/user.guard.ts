@@ -24,6 +24,8 @@ export class UserGuard implements CanActivate {
     try {
       const decodedToken = await this.firebaseAdmin.auth().verifyIdToken(token);
       request['user'] = decodedToken;
+
+      console.log('Decoded Token =>', decodedToken);
       return true;
     } catch (error) {
       throw new UnauthorizedException(error);

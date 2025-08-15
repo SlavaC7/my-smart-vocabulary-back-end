@@ -3,6 +3,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FirebaseModule } from './common/firebase/firebase.module';
+import { WordsModule } from './words/words.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { FirebaseModule } from './common/firebase/firebase.module';
       }),
       inject: [ConfigService],
     }),
+    WordsModule,
   ],
 })
 export class AppModule {}
