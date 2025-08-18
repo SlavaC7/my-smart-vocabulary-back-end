@@ -3,13 +3,17 @@ import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from './entities/word.entity';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
+import { Folder } from 'src/folders/entities/folder.entity';
 
 @Injectable()
 export class WordsService {
-  constructor(@InjectModel(Word.name) private wordsModel: Model<Word>) {}
+  constructor(
+    @InjectModel(Word.name) private wordsModel: Model<Word>,
+    @InjectModel(Folder.name) private folderModel: Model<Folder>,
+  ) {}
 
-  private async checkOwnership(wordId: string, uid: string) {
+  private async checkOwnership(wordId: ObjectId, uid: string) {
     const word = await this.wordsModel.findById(wordId);
     if (!word) throw new NotFoundException('Word not found');
 
@@ -23,14 +27,33 @@ export class WordsService {
   async create(createWordDto: CreateWordDto) {
     createWordDto.createdAt = new Date().toISOString();
 
+    if (createWordDto.folderId) {
+      const folder = await this.folderModel.findById(createWordDto.folderId);
+
+      if (folder) {
+        //Question
+        this.folderModel.updateOne({ _id: createWordDto.folderId }, { count: folder.count + 1 });
+      }
+    }
+
     return this.wordsModel.create(createWordDto);
   }
 
-  async findAll(ownerUid: string, search: string | undefined = undefined, skip = 0, limit = 10) {
+  async findAll(
+    ownerUid: string,
+    search: string | undefined = undefined,
+    skip = 0,
+    limit = 10,
+    folderId: string | undefined,
+  ) {
     const filter: Record<string, any> = { ownerUid };
 
     if (search) {
       filter.word = { $regex: search, $options: 'i' };
+    }
+
+    if (folderId) {
+      filter.folderId = folderId;
     }
 
     const docs = await this.wordsModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
@@ -40,18 +63,49 @@ export class WordsService {
     return { totalCount, docs };
   }
 
-  findOne(id: string) {
+  findOne(id: ObjectId) {
     return this.wordsModel.findById(id);
   }
 
-  async update(id: string, updateWordDto: UpdateWordDto, uid: string) {
-    await this.checkOwnership(id, uid);
+  async update(id: ObjectId, updateWordDto: UpdateWordDto, uid: string) {
+    const { word } = await this.checkOwnership(id, uid);
 
+    console.log('updateWordDto =>', updateWordDto);
+
+    if (word.folderId) {
+      console.log('Clear');
+      const oldFolder = await this.folderModel.findById(word.folderId);
+
+      if (oldFolder) {
+        await this.folderModel.updateOne({ _id: word.folderId }, { count: oldFolder?.count - 1 });
+      }
+    }
+
+    if (updateWordDto.folderId) {
+      console.log('updateOne');
+
+      const folder = await this.folderModel.findById(updateWordDto.folderId);
+
+      if (folder) {
+        await this.folderModel.updateOne(
+          { _id: updateWordDto.folderId },
+          { count: folder?.count + 1 },
+        );
+      }
+    }
     return this.wordsModel.updateOne({ _id: id }, updateWordDto);
   }
 
-  async remove(id: string, uid: string) {
-    await this.checkOwnership(id, uid);
+  async remove(id: ObjectId, uid: string) {
+    const { word } = await this.checkOwnership(id, uid);
+
+    if (word.folderId) {
+      const folder = await this.folderModel.findById(word.folderId);
+
+      if (folder && folder?.count !== 0) {
+        this.folderModel.updateOne({ _id: word.folderId }, { count: folder.count - 1 });
+      }
+    }
 
     return this.wordsModel.deleteOne({ _id: id });
   }

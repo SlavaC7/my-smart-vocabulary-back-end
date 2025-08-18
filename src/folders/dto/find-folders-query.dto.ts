@@ -2,7 +2,7 @@ import { ApiHideProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class FindWordsQueryDto {
+export class FindFoldersQueryDto {
   @ApiHideProperty()
   @IsOptional()
   @IsString()
@@ -12,11 +12,6 @@ export class FindWordsQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
-
-  @ApiPropertyOptional({ description: 'Поиск по папке', example: 'id' })
-  @IsOptional()
-  @IsString()
-  folderId?: string;
 
   @ApiPropertyOptional({ description: 'Пропустить N слов', example: 0 })
   @IsOptional()

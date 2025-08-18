@@ -4,11 +4,18 @@ import { WordsController } from './words.controller';
 import { FirebaseModule } from 'src/common/firebase/firebase.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Word, WordsSchema } from './entities/word.entity';
+import { Folder, FolderSchema } from 'src/folders/entities/folder.entity';
 
 @Module({
   controllers: [WordsController],
   providers: [WordsService],
 
-  imports: [MongooseModule.forFeature([{ name: Word.name, schema: WordsSchema }]), FirebaseModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Word.name, schema: WordsSchema },
+      { name: Folder.name, schema: FolderSchema },
+    ]),
+    FirebaseModule,
+  ],
 })
 export class WordsModule {}

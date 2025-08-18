@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FirebaseModule } from './common/firebase/firebase.module';
 import { WordsModule } from './words/words.module';
+import { FoldersModule } from './folders/folders.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WordsModule } from './words/words.module';
       inject: [ConfigService],
     }),
     WordsModule,
+    FoldersModule,
   ],
 })
 export class AppModule {}

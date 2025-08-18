@@ -16,6 +16,7 @@ import { UserGuard } from 'src/common/guards/user.guard';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { InjectUser } from 'src/common/decorators/user.decorator';
 import { FindWordsQueryDto } from './dto/find-words-query.dto';
+import { ObjectId } from 'mongoose';
 
 @Controller('words')
 export class WordsController {
@@ -31,13 +32,13 @@ export class WordsController {
   @Get()
   @UseGuards(UserGuard)
   findAll(@InjectUser() user: DecodedIdToken, @Query() query: FindWordsQueryDto) {
-    const { search, skip, limit } = query;
-    return this.wordsService.findAll(user.uid, search, skip, limit);
+    const { search, skip, limit, folderId } = query;
+    return this.wordsService.findAll(user.uid, search, skip, limit, folderId);
   }
 
   @Get(':id')
   @UseGuards(UserGuard)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: ObjectId) {
     return this.wordsService.findOne(id);
   }
 
@@ -45,7 +46,7 @@ export class WordsController {
   @UseGuards(UserGuard)
   update(
     @InjectUser() user: DecodedIdToken,
-    @Param('id') id: string,
+    @Param('id') id: ObjectId,
     @Body() updateWordDto: UpdateWordDto,
   ) {
     return this.wordsService.update(id, updateWordDto, user.uid);
@@ -53,7 +54,7 @@ export class WordsController {
 
   @Delete(':id')
   @UseGuards(UserGuard)
-  remove(@InjectUser() user: DecodedIdToken, @Param('id') id: string) {
+  remove(@InjectUser() user: DecodedIdToken, @Param('id') id: ObjectId) {
     return this.wordsService.remove(id, user.uid);
   }
 }
