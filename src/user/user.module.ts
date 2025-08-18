@@ -6,10 +6,7 @@ import { User, UserSchema } from './entities/user.schema';
 import { FirebaseModule } from 'src/common/firebase/firebase.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    FirebaseModule,
-  ],
+  imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), FirebaseModule],
   controllers: [UserController],
   providers: [UserService],
 })

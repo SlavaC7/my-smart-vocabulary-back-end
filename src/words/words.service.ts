@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -32,23 +28,14 @@ export class WordsService {
     return this.wordsModel.create(createWordDto);
   }
 
-  async findAll(
-    ownerUid: string,
-    search: string | undefined = undefined,
-    skip = 0,
-    limit = 10,
-  ) {
+  async findAll(ownerUid: string, search: string | undefined = undefined, skip = 0, limit = 10) {
     const filter: Record<string, any> = { ownerUid };
 
     if (search) {
       filter.word = { $regex: search, $options: 'i' };
     }
 
-    const docs = await this.wordsModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+    const docs = await this.wordsModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
 
     const totalCount = await this.wordsModel.countDocuments(filter);
 

@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,10 +14,7 @@ export class UserController {
 
   @Post('me')
   @UseGuards(UserGuard)
-  create(
-    @InjectUser() user: DecodedIdToken,
-    @Body() createUserDto: CreateUserDto,
-  ) {
+  create(@InjectUser() user: DecodedIdToken, @Body() createUserDto: CreateUserDto) {
     createUserDto.uid = user.uid;
 
     return this.userService.create(createUserDto);
@@ -39,10 +28,7 @@ export class UserController {
 
   @Patch('me')
   @UseGuards(UserGuard)
-  update(
-    @InjectUser() user: DecodedIdToken,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  update(@InjectUser() user: DecodedIdToken, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(user.uid, updateUserDto);
   }
 

@@ -14,9 +14,7 @@ export class UserService {
   }
 
   findByFirebaseUid(uid: string) {
-    return this.userModel
-      .findOne({ uid: uid })
-      .orFail(new NotFoundException('User not found'));
+    return this.userModel.findOne({ uid: uid }).orFail(new NotFoundException('User not found'));
   }
 
   update(uid: string, updateUserDto: UpdateUserDto) {

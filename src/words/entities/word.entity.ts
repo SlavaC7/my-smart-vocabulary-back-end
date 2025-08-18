@@ -1,13 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument, Types } from 'mongoose';
+import { EWordType } from '../enum/type';
 
 export type WordsDocument = HydratedDocument<Words>;
-
-export enum EWordType {
-  word = 'word',
-  phrase = 'phrase',
-}
 
 @Schema({ versionKey: false })
 export class Words {

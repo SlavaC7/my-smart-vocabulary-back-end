@@ -1,7 +1,7 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
-import { EWordType } from '../entities/word.entity';
 import { Types } from 'mongoose';
+import { EWordType } from '../enum/type';
 
 export class CreateWordDto {
   @ApiProperty({ description: 'Текст слова или фразы', example: 'hello' })

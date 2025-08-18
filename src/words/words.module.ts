@@ -9,9 +9,6 @@ import { Words, WordsSchema } from './entities/word.entity';
   controllers: [WordsController],
   providers: [WordsService],
 
-  imports: [
-    MongooseModule.forFeature([{ name: Words.name, schema: WordsSchema }]),
-    FirebaseModule,
-  ],
+  imports: [MongooseModule.forFeature([{ name: Words.name, schema: WordsSchema }]), FirebaseModule],
 })
 export class WordsModule {}

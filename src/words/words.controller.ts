@@ -23,20 +23,14 @@ export class WordsController {
 
   @Post()
   @UseGuards(UserGuard)
-  create(
-    @InjectUser() user: DecodedIdToken,
-    @Body() createWordDto: CreateWordDto,
-  ) {
+  create(@InjectUser() user: DecodedIdToken, @Body() createWordDto: CreateWordDto) {
     createWordDto.uid = user.uid;
     return this.wordsService.create(createWordDto);
   }
 
   @Get()
   @UseGuards(UserGuard)
-  findAll(
-    @InjectUser() user: DecodedIdToken,
-    @Query() query: FindWordsQueryDto,
-  ) {
+  findAll(@InjectUser() user: DecodedIdToken, @Query() query: FindWordsQueryDto) {
     const { search, skip, limit } = query;
     return this.wordsService.findAll(user.uid, search, skip, limit);
   }
