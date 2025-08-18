@@ -3,10 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument, Types } from 'mongoose';
 import { EWordType } from '../enum/type';
 
-export type WordsDocument = HydratedDocument<Words>;
+export type WordsDocument = HydratedDocument<Word>;
 
-@Schema({ versionKey: false })
-export class Words {
+@Schema({ versionKey: false, timestamps: true })
+export class Word {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   @ApiProperty({ description: 'ID владельца слова' })
   ownerUid: string;
@@ -23,13 +23,9 @@ export class Words {
   @ApiProperty({ description: 'ID папки, если есть' })
   folderId?: Types.ObjectId | null;
 
-  @Prop({ type: Date, default: Date.now, index: true })
-  @ApiProperty({ description: 'Дата создания' })
-  createdAt?: Date;
-
   @Prop({
     type: String,
-    enum: Object.values(EWordType),
+    enum: EWordType,
     required: true,
     index: true,
   })
@@ -45,4 +41,4 @@ export class Words {
   flag: string;
 }
 
-export const WordsSchema = SchemaFactory.createForClass(Words);
+export const WordsSchema = SchemaFactory.createForClass(Word);

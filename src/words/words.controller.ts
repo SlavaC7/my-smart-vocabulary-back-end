@@ -24,7 +24,7 @@ export class WordsController {
   @Post()
   @UseGuards(UserGuard)
   create(@InjectUser() user: DecodedIdToken, @Body() createWordDto: CreateWordDto) {
-    createWordDto.uid = user.uid;
+    createWordDto.ownerUid = user.uid;
     return this.wordsService.create(createWordDto);
   }
 

@@ -2,12 +2,12 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Words } from './entities/word.entity';
+import { Word } from './entities/word.entity';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class WordsService {
-  constructor(@InjectModel(Words.name) private wordsModel: Model<Words>) {}
+  constructor(@InjectModel(Word.name) private wordsModel: Model<Word>) {}
 
   private async checkOwnership(wordId: string, uid: string) {
     const word = await this.wordsModel.findById(wordId);
@@ -21,8 +21,6 @@ export class WordsService {
   }
 
   async create(createWordDto: CreateWordDto) {
-    createWordDto.ownerUid = createWordDto.uid;
-
     createWordDto.createdAt = new Date().toISOString();
 
     return this.wordsModel.create(createWordDto);
