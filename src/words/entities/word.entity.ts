@@ -5,7 +5,7 @@ import { EWordType } from '../enum/type';
 
 export type WordsDocument = HydratedDocument<Word>;
 
-@Schema({ versionKey: false, timestamps: true })
+@Schema({ _id: true, versionKey: false, timestamps: true })
 export class Word {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   @ApiProperty({ description: 'ID владельца слова' })

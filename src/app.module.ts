@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { FirebaseModule } from './common/firebase/firebase.module';
 import { WordsModule } from './words/words.module';
 import { FoldersModule } from './folders/folders.module';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FoldersModule } from './folders/folders.module';
     }),
     WordsModule,
     FoldersModule,
+    QuizModule,
   ],
 })
 export class AppModule {}
