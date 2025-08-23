@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Answer, Quiz, QuizConfig, QuizItem } from './entities/quiz.entity';
+import { Quiz } from './entities/quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from 'src/words/entities/word.entity';
 import { Model, ObjectId, SortOrder } from 'mongoose';
@@ -14,6 +14,9 @@ import { QuizItemMode } from './enum/mode';
 import { QuizStatus } from './enum/status';
 import { FindQuizQueryDto } from './dto/find-quiz-query.dto';
 import { AnswerQuizDto } from './dto/answer-quiz-dto';
+import { QuizConfigDto } from './dto/create-quiz-dto';
+import { QuizItem } from './entities/quiz-item.entity';
+import { Answer } from './entities/answer.entity';
 
 @Injectable()
 export class QuizService {
@@ -48,7 +51,7 @@ export class QuizService {
     return { correct, incorrect };
   }
 
-  async getWordsForQuiz(config: QuizConfig, uid: string) {
+  async getWordsForQuiz(config: QuizConfigDto, uid: string) {
     if (config.count < 5) {
       throw new BadRequestException('Wor must be 5 or more');
     }
@@ -89,7 +92,7 @@ export class QuizService {
     return words;
   }
 
-  async create(config: QuizConfig, uid: string) {
+  async create(config: QuizConfigDto, uid: string) {
     const words = await this.getWordsForQuiz(config, uid);
 
     const test: QuizItem[] = words.map((word) => {
@@ -97,6 +100,7 @@ export class QuizService {
 
       const correctTranslation = getRandomElement(word.translations);
 
+      //_id.toString() Mongose _id
       const otherWords = words.filter((w) => w._id !== word._id && w.translations.length > 0);
 
       const incorrectTranslations = shuffleArray(otherWords)
@@ -143,7 +147,14 @@ export class QuizService {
   }
 
   async findAll(uid: string, params: FindQuizQueryDto) {
+    console.log('findAll', { ...params });
     const filter: Record<string, any> = { ownerUid: uid };
+
+    if (params.status) {
+      filter.status = params.status;
+    }
+
+    console.log('findAll filter', filter);
 
     const docs = await this.quizModel
       .find(filter)
@@ -156,23 +167,27 @@ export class QuizService {
     return { totalCount, docs };
   }
 
-  async active(uid: string) {
-    const filter: Record<string, any> = { ownerUid: uid, status: QuizStatus.in_progress };
-
-    const docs = await this.quizModel.find(filter);
-
-    if (!docs.length) {
-      return null;
-    }
-
-    return docs[0];
-  }
-
   async answer(uid: string, id: ObjectId, data: AnswerQuizDto) {
     const quiz = await this.checkOwnership(id, uid);
 
     if (!quiz.quiz.some((q) => q.id === data.questionId)) {
       throw new BadRequestException('Invalid questionId');
+    }
+
+    if (quiz.userAnswers.map((item) => item.questionId).includes(data.questionId)) {
+      throw new BadRequestException('This answer for this question already exist');
+    }
+
+    if (quiz.userAnswers.map((item) => item.answerId).includes(data.answerId)) {
+      throw new BadRequestException('This answer already exist');
+    }
+
+    if (data.wordId) {
+      console.log('--- update wrod stats --- ');
+      await this.wordsModel.updateOne(
+        { _id: data.wordId },
+        { $inc: data.isCorrect ? { correct: 1 } : { incorrect: 1 } },
+      );
     }
 
     quiz.userAnswers.push({

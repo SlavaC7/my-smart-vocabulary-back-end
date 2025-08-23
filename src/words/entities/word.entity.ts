@@ -39,6 +39,14 @@ export class Word {
   @Prop()
   @ApiProperty({ description: 'Флаг страны' })
   flag: string;
+
+  @Prop()
+  @ApiProperty({ description: 'Кол-во правильно ответов на это слово' })
+  correct: number;
+
+  @Prop()
+  @ApiProperty({ description: 'Кол-во не правильно ответов на это слово' })
+  incorrect: number;
 }
 
 export const WordsSchema = SchemaFactory.createForClass(Word);

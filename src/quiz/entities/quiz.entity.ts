@@ -1,106 +1,13 @@
 // src/quiz/entities/quiz.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-import { EWordType } from 'src/words/enum/type';
+import { HydratedDocument } from 'mongoose';
 import { QuizStatus } from '../enum/status';
-import { QuizItemMode } from '../enum/mode';
-
+import { QuizItem, QuizItemSchema } from './quiz-item.entity';
+import { UserAnswer, UserAnswerSchema } from './user-answer.entity';
+import { QuizConfigSchema } from './quiz-config.entity';
+import { QuizConfigDto } from '../dto/create-quiz-dto';
+//разнести в разные файлы
 export type QuizDocument = HydratedDocument<Quiz>;
-
-@Schema({ _id: false, versionKey: false })
-export class Answer {
-  @Prop({ required: true })
-  id: string;
-
-  @Prop({ required: true, trim: true })
-  text: string;
-
-  @Prop({ required: true })
-  isCorrect: boolean;
-}
-
-export const AnswerSchema = SchemaFactory.createForClass(Answer);
-
-@Schema({ _id: false, versionKey: false })
-export class QuizItem {
-  @Prop({ required: true })
-  id: string;
-
-  // если слово удалено — будет null
-  @Prop({ type: Types.ObjectId, ref: 'Words', default: null })
-  wordId: Types.ObjectId | null;
-
-  // снапшот текста слова на момент теста
-  @Prop({ required: true, trim: true })
-  word: string;
-
-  @Prop({ type: [AnswerSchema], required: true, default: [] })
-  answers: Answer[];
-
-  @Prop({ required: true, trim: true })
-  flag: string;
-
-  @Prop({ required: true, enum: Object.values(EWordType) })
-  type: EWordType;
-
-  @Prop({
-    required: true,
-    enum: QuizItemMode,
-    default: QuizItemMode.match,
-  })
-  mode: QuizItemMode;
-}
-export const TestItemSchema = SchemaFactory.createForClass(QuizItem);
-
-@Schema({ _id: false, versionKey: false })
-export class UserAnswer {
-  @Prop({ type: String, required: true })
-  questionId: string;
-
-  @Prop({ type: String, required: true })
-  answerId: string;
-
-  @Prop({ required: true })
-  isCorrect: boolean;
-
-  @Prop({ type: Date, required: true })
-  answeredAt: Date;
-}
-export const UserAnswerSchema = SchemaFactory.createForClass(UserAnswer);
-
-@Schema({ _id: false, versionKey: false })
-export class QuizConfig {
-  @Prop({ type: Number, required: true, min: 5, max: 50 })
-  count: number;
-
-  // фильтр по папкам
-  @Prop({ type: [Types.ObjectId], ref: 'Folder', default: [] })
-  folders?: Types.ObjectId[];
-
-  // фильтр по типу слова
-  @Prop({ type: [String], enum: Object.values(EWordType), default: [] })
-  type?: EWordType[];
-
-  // коды языков (например, 'en', 'it', 'ru' и т.д.)
-  @Prop({ type: [String], default: [] })
-  lang?: string[];
-
-  // "слабые слова" (incorrect > correct)
-  @Prop({ type: Boolean, default: false })
-  weakWords?: boolean;
-
-  // "старые слова" — взять слова, созданные ДО этой даты
-  @Prop({ type: Date, required: false })
-  olderThan?: Date;
-
-  @Prop({
-    required: false,
-    enum: QuizItemMode,
-    default: QuizItemMode.match,
-  })
-  mode?: QuizItemMode;
-}
-export const QuizConfigSchema = SchemaFactory.createForClass(QuizConfig);
 
 @Schema({
   versionKey: false,
@@ -111,7 +18,7 @@ export class Quiz {
   ownerUid: string;
 
   @Prop({
-    type: [TestItemSchema],
+    type: [QuizItemSchema],
     required: true,
     default: [],
     validate: {
@@ -148,6 +55,6 @@ export class Quiz {
   duration?: number;
 
   @Prop({ type: QuizConfigSchema, required: true })
-  config: QuizConfig;
+  config: QuizConfigDto;
 }
 export const QuizSchema = SchemaFactory.createForClass(Quiz);

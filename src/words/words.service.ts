@@ -32,6 +32,7 @@ export class WordsService {
 
       if (folder) {
         //Question
+
         this.folderModel.updateOne({ _id: createWordDto.folderId }, { count: folder.count + 1 });
       }
     }
@@ -70,28 +71,12 @@ export class WordsService {
   async update(id: ObjectId, updateWordDto: UpdateWordDto, uid: string) {
     const { word } = await this.checkOwnership(id, uid);
 
-    console.log('updateWordDto =>', updateWordDto);
-
     if (word.folderId) {
-      console.log('Clear');
-      const oldFolder = await this.folderModel.findById(word.folderId);
-
-      if (oldFolder) {
-        await this.folderModel.updateOne({ _id: word.folderId }, { count: oldFolder?.count - 1 });
-      }
+      await this.folderModel.updateOne({ _id: word.folderId }, { $inc: { count: -1 } });
     }
 
     if (updateWordDto.folderId) {
-      console.log('updateOne');
-
-      const folder = await this.folderModel.findById(updateWordDto.folderId);
-
-      if (folder) {
-        await this.folderModel.updateOne(
-          { _id: updateWordDto.folderId },
-          { count: folder?.count + 1 },
-        );
-      }
+      await this.folderModel.updateOne({ _id: updateWordDto.folderId }, { $inc: { count: 1 } });
     }
     return this.wordsModel.updateOne({ _id: id }, updateWordDto);
   }

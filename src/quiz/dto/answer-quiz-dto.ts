@@ -1,25 +1,32 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString } from 'class-validator';
 
 export class AnswerQuizDto {
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'id ответа пользователя',
     example: 'string',
   })
   @IsString()
   answerId: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'id вопроса (карточки) типа match',
     example: 'string',
   })
   @IsString()
   questionId: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Корректный ли ответ',
     example: 'string',
   })
   @IsBoolean()
   isCorrect: boolean;
+
+  @ApiProperty({
+    description: 'id слова',
+    example: 'string',
+  })
+  @IsString()
+  wordId: string;
 }
