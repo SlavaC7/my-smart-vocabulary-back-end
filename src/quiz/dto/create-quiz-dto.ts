@@ -61,6 +61,6 @@ export class QuizConfigDto {
   })
   @IsOptional()
   @IsArray()
-  @IsEnum(QuizItemMode, { each: true }) // массив енамов
+  @IsEnum(QuizItemMode, { each: true })
   mode?: QuizItemMode[];
 }

@@ -28,11 +28,7 @@ export class QuizConfig {
   @Prop({ type: Date, required: false })
   olderThan?: Date;
 
-  @Prop({
-    required: false,
-    enum: QuizItemMode,
-    default: QuizItemMode.match,
-  })
-  mode?: QuizItemMode;
+  @Prop({ type: [String], enum: Object.values(QuizItemMode), default: [] })
+  mode?: QuizItemMode[];
 }
 export const QuizConfigSchema = SchemaFactory.createForClass(QuizConfig);

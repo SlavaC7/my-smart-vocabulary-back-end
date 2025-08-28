@@ -5,8 +5,11 @@ export class UserAnswer {
   @Prop({ type: String, required: true })
   questionId: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: false })
   answerId: string;
+
+  @Prop({ type: String, required: false })
+  answerText: string;
 
   @Prop({ required: true })
   isCorrect: boolean;

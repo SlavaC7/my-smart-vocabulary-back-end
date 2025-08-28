@@ -98,34 +98,41 @@ export class QuizService {
     const test: QuizItem[] = words.map((word) => {
       const questionId = uuidv4();
 
-      const correctTranslation = getRandomElement(word.translations);
+      const mode = getRandomElement(config.mode || []);
 
-      //_id.toString() Mongose _id
-      const otherWords = words.filter((w) => w._id !== word._id && w.translations.length > 0);
+      let answers: Answer[] = [];
 
-      const incorrectTranslations = shuffleArray(otherWords)
-        .slice(0, 3)
-        .map((w) => getRandomElement(w.translations));
+      if (mode === QuizItemMode.match) {
+        //_id.toString() Mongose _id
 
-      const answers: Answer[] = shuffleArray([
-        {
-          id: uuidv4(),
-          questionId: questionId,
-          text: correctTranslation,
-          isCorrect: true,
-        },
-        ...incorrectTranslations.map((text) => ({
-          id: uuidv4(),
-          questionId: questionId,
-          text,
-          isCorrect: false,
-        })),
-      ]);
+        const correctTranslation = getRandomElement(word.translations);
+
+        const otherWords = words.filter((w) => w._id !== word._id && w.translations.length > 0);
+
+        const incorrectTranslations = shuffleArray(otherWords)
+          .slice(0, 3)
+          .map((w) => getRandomElement(w.translations));
+
+        answers = shuffleArray([
+          {
+            id: uuidv4(),
+            questionId: questionId,
+            text: correctTranslation,
+            isCorrect: true,
+          },
+          ...incorrectTranslations.map((text) => ({
+            id: uuidv4(),
+            questionId: questionId,
+            text,
+            isCorrect: false,
+          })),
+        ]);
+      }
 
       return {
         id: questionId,
         wordId: word._id,
-        mode: QuizItemMode.match,
+        mode: mode,
         word: word.word,
         answers,
         flag: word.flag,
@@ -178,8 +185,10 @@ export class QuizService {
       throw new BadRequestException('This answer for this question already exist');
     }
 
-    if (quiz.userAnswers.map((item) => item.answerId).includes(data.answerId)) {
-      throw new BadRequestException('This answer already exist');
+    if (data.mode === QuizItemMode.match) {
+      if (quiz.userAnswers.map((item) => item.answerId).includes(data.answerId)) {
+        throw new BadRequestException('This answer already exist');
+      }
     }
 
     if (data.wordId) {

@@ -18,6 +18,7 @@ export class QuizController {
 
   @Post('')
   create(@InjectUser() user: DecodedIdToken, @Body() config: QuizConfigDto) {
+    console.log('DATA:', config);
     return this.quizService.create(config, user.uid);
   }
 

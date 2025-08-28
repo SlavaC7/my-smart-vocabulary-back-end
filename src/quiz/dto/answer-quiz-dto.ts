@@ -1,13 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { QuizItemMode } from '../enum/mode';
 
 export class AnswerQuizDto {
   @ApiProperty({
     description: 'id ответа пользователя',
     example: 'string',
   })
+  @IsOptional()
   @IsString()
   answerId: string;
+
+  @ApiProperty({
+    description: 'Письменный ответ',
+    example: 'string',
+  })
+  @IsOptional()
+  @IsString()
+  answerText: string;
 
   @ApiProperty({
     description: 'id вопроса (карточки) типа match',
@@ -29,4 +39,11 @@ export class AnswerQuizDto {
   })
   @IsString()
   wordId: string;
+
+  @ApiProperty({
+    description: 'Мод теста',
+    example: QuizItemMode.match,
+    default: QuizItemMode.match,
+  })
+  mode: QuizItemMode;
 }
