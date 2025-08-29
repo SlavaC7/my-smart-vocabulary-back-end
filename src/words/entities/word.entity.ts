@@ -15,7 +15,7 @@ export class Word {
   @ApiProperty({ description: 'Текст слова или фразы' })
   word: string;
 
-  @Prop({ type: [String], default: [] })
+  @Prop({ type: [String], default: [], trim: true })
   @ApiProperty({ description: 'Список переводов' })
   translations: string[];
 

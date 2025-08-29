@@ -17,6 +17,10 @@ export class QuizItem {
   @Prop({ required: true, trim: true })
   word: string;
 
+  // снапшот текста слова на момент теста
+  @Prop({ required: false, trim: true })
+  correctWriteWord?: string[];
+
   @Prop({ type: [AnswerSchema], required: true, default: [] })
   answers: Answer[];
 

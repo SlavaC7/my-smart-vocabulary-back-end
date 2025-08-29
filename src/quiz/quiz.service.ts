@@ -129,6 +129,13 @@ export class QuizService {
         ]);
       }
 
+      const writeCorrect =
+        mode === QuizItemMode.write_word
+          ? {
+              correctWriteWord: word.translations,
+            }
+          : {};
+
       return {
         id: questionId,
         wordId: word._id,
@@ -137,6 +144,7 @@ export class QuizService {
         answers,
         flag: word.flag,
         type: word.type,
+        ...writeCorrect,
       };
     });
 
