@@ -25,15 +25,14 @@ export class WordsService {
   }
 
   async create(createWordDto: CreateWordDto) {
+    console.log('[CREATE]:createWordDto', createWordDto);
     createWordDto.createdAt = new Date().toISOString();
 
     if (createWordDto.folderId) {
       const folder = await this.folderModel.findById(createWordDto.folderId);
 
       if (folder) {
-        //Question
-
-        this.folderModel.updateOne({ _id: createWordDto.folderId }, { count: folder.count + 1 });
+        await this.folderModel.updateOne({ _id: createWordDto.folderId }, { $inc: { count: 1 } });
       }
     }
 
@@ -71,13 +70,14 @@ export class WordsService {
   async update(id: ObjectId, updateWordDto: UpdateWordDto, uid: string) {
     const { word } = await this.checkOwnership(id, uid);
 
-    if (word.folderId) {
-      await this.folderModel.updateOne({ _id: word.folderId }, { $inc: { count: -1 } });
-    }
-
     if (updateWordDto.folderId) {
       await this.folderModel.updateOne({ _id: updateWordDto.folderId }, { $inc: { count: 1 } });
     }
+
+    if (word.folderId && !updateWordDto.folderId) {
+      await this.folderModel.updateOne({ _id: word.folderId }, { $inc: { count: -1 } });
+    }
+
     return this.wordsModel.updateOne({ _id: id }, updateWordDto);
   }
 

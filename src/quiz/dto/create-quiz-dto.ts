@@ -18,6 +18,7 @@ export class QuizConfigDto {
     description: 'Фильтрация по папкам',
     example: ['folder1', 'folder2'],
   })
+  @IsOptional()
   @IsArray()
   @IsString({ each: true }) // каждый элемент должен быть строкой
   folders?: string[];
@@ -26,6 +27,7 @@ export class QuizConfigDto {
     description: 'Типы слов',
     example: [EWordType.word, EWordType.phrase],
   })
+  @IsOptional()
   @IsArray()
   @IsEnum(EWordType, { each: true }) // каждый элемент должен быть енамом
   type?: EWordType[];
@@ -34,6 +36,7 @@ export class QuizConfigDto {
     description: 'Языки для теста',
     example: ['EN', 'IT'],
   })
+  @IsOptional()
   @IsArray()
   @IsString({ each: true }) // каждый элемент строка
   lang?: string[];
