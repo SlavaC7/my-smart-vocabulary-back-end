@@ -7,7 +7,7 @@ import {
 import { Quiz } from './entities/quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from 'src/words/entities/word.entity';
-import { Model, ObjectId, SortOrder } from 'mongoose';
+import { HydratedDocument, Model, ObjectId, SortOrder } from 'mongoose';
 import { getRandomElement, shuffleArray } from './helpers/generateQuiz';
 import { v4 as uuidv4 } from 'uuid';
 import { QuizItemMode } from './enum/mode';
@@ -84,7 +84,10 @@ export class QuizService {
     // }
 
     // достаём с лимитом
-    let words = await this.wordsModel.find(query).limit(config.count).exec();
+    let words = await this.wordsModel.aggregate<HydratedDocument<Word>>([
+      { $match: query },
+      { $sample: { size: config.count } },
+    ]);
 
     // тут можно перемешать, если надо
     words = shuffleArray(words).slice(0, config.count);
