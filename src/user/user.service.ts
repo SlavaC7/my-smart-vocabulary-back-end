@@ -27,6 +27,14 @@ export class UserService {
     return this.userModel.updateOne({ uid: uid }, updateUserDto);
   }
 
+  async stats(uid: string) {
+    const filter: Record<string, any> = { ownerUid: uid };
+    const words = await this.wordsModel.countDocuments(filter);
+    const folders = await this.folderModel.countDocuments(filter);
+
+    return { words, folders };
+  }
+
   async remove(uid: string) {
     await this.folderModel.deleteMany({ ownerUid: uid });
     await this.wordsModel.deleteMany({ ownerUid: uid });

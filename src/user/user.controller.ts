@@ -5,7 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { UserGuard } from 'src/common/guards/user.guard';
 import { InjectUser } from 'src/common/decorators/user.decorator';
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 @ApiTags('User')
 @Controller('user')
@@ -30,6 +30,12 @@ export class UserController {
   @UseGuards(UserGuard)
   update(@InjectUser() user: DecodedIdToken, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(user.uid, updateUserDto);
+  }
+
+  @Get('me/stats')
+  @UseGuards(UserGuard)
+  stats(@InjectUser() user: DecodedIdToken) {
+    return this.userService.stats(user.uid);
   }
 
   @Delete('me')
