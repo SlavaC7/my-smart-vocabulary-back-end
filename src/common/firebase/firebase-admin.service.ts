@@ -5,11 +5,16 @@ import * as admin from 'firebase-admin';
 export class FirebaseAdminService {
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-require-imports
-    const serviceAccount = require('../../../my-smart-vocabulary-firebase-adminsdk-fbsvc-19e792b43b.json');
+    // const serviceAccount = require('../../../my-smart-vocabulary-firebase-adminsdk-fbsvc-19e792b43b.json');
 
     if (!admin.apps.length) {
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount as string),
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        }),
+        // credential: admin.credential.cert(serviceAccount as string),
       });
     }
   }
