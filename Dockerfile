@@ -1,5 +1,5 @@
 # ---- Build stage ----
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -10,15 +10,14 @@ COPY . .
 RUN npm run build
 
 # ---- Run stage ----
-FROM node:20-alpine AS runner
+FROM node:20 AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=4000
 
 COPY package*.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci 
 
 COPY --from=builder /app/dist ./dist
 
