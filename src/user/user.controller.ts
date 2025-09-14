@@ -39,7 +39,13 @@ export class UserController {
   }
 
   @Delete('me')
+  @UseGuards(UserGuard)
   remove(@InjectUser() user: DecodedIdToken) {
     return this.userService.remove(user.uid);
+  }
+
+  @Get('health')
+  health() {
+    return { ok: true, ts: Date.now() };
   }
 }
