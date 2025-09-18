@@ -12,7 +12,7 @@ import { QuizModule } from './quiz/quiz.module';
     FirebaseModule,
     UserModule,
     ConfigModule.forRoot({
-      envFilePath: '.env.dev',
+      envFilePath: '.env',
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

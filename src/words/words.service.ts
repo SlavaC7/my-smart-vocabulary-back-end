@@ -25,7 +25,6 @@ export class WordsService {
   }
 
   async create(createWordDto: CreateWordDto) {
-    console.log('[CREATE]:createWordDto', createWordDto);
     createWordDto.createdAt = new Date().toISOString();
 
     if (createWordDto.folderId) {
