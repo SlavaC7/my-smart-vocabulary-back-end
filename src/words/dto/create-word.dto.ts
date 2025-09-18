@@ -9,6 +9,15 @@ export class CreateWordDto {
   word: string;
 
   @ApiProperty({
+    description: 'Описание слова или фразы',
+    example: 'Like in English "was"',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({
     description: 'Список переводов',
     example: ['привет', 'здравствуйте'],
     type: [String],

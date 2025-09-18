@@ -4,7 +4,6 @@ import * as admin from 'firebase-admin';
 @Injectable()
 export class FirebaseAdminService {
   constructor() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-require-imports
     // const serviceAccount = require('../../../my-smart-vocabulary-firebase-adminsdk-fbsvc-19e792b43b.json');
 
     if (!admin.apps.length) {

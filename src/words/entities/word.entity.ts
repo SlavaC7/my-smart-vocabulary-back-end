@@ -15,6 +15,10 @@ export class Word {
   @ApiProperty({ description: 'Текст слова или фразы' })
   word: string;
 
+  @Prop({ required: false, trim: true })
+  @ApiProperty({ description: 'описание слова или фразы' })
+  description: string;
+
   @Prop({ type: [String], default: [], trim: true })
   @ApiProperty({ description: 'Список переводов' })
   translations: string[];
