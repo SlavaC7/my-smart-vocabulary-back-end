@@ -7,7 +7,7 @@ import {
 import { Quiz } from './entities/quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Word } from 'src/words/entities/word.entity';
-import { HydratedDocument, Model, ObjectId, SortOrder } from 'mongoose';
+import { HydratedDocument, Model, ObjectId, SortOrder, Types } from 'mongoose';
 import { getRandomElement, shuffleArray } from './helpers/generateQuiz';
 import { v4 as uuidv4 } from 'uuid';
 import { QuizItemMode } from './enum/mode';
@@ -59,7 +59,7 @@ export class QuizService {
 
     // фильтр по папкам
     if (config.folders?.length) {
-      query.folderId = { $in: config.folders };
+      query.folderId = { $in: config.folders.map((id) => new Types.ObjectId(id)) };
     }
 
     // фильтр по типу слова
@@ -69,7 +69,7 @@ export class QuizService {
 
     // фильтр по языкам
     if (config.lang?.length) {
-      query.code = { $in: config.lang };
+      query.lang = { $in: config.lang };
     }
 
     // слабые слова: incorrect > correct
